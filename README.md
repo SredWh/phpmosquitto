@@ -1,5 +1,24 @@
 # phpmosquitto
 
-[root@192 ~]# cd /etc/yum.repos.d/
-[root@192 yum.repos.d]# wget http://download.opensuse.org/repositories/home:/oojah:/mqtt/CentOS_CentOS-7/home:oojah:mqtt.repo
-[root@192 yum.repos.d]# yum makecache
+<?php
+// 连接到MQTT服务器
+$mqtt = new Mosquitto\Client();
+$mqtt->connect("localhost", 1883);
+
+// 订阅主题
+$topic = "test";
+$mqtt->subscribe($topic, 0);
+
+// 处理接收到的消息
+$mqtt->onMessage(function ($message) {
+    echo "Received message on topic {$message->topic}: {$message->payload}\n";
+});
+
+// 进行消息循环
+while (true) {
+    $mqtt->loop();
+}
+
+// 断开连接
+$mqtt->disconnect();
+?>
